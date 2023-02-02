@@ -1,0 +1,6 @@
+{% if widget.is_initial %}
+    <p>
+        <img class="rounded app-icon" src="{{ widget.value.url }}" height="70" width="100" style="object-fit:cover;">
+    </p>
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

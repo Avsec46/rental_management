@@ -1,0 +1,16 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+<select name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} multiple="multiple">
+    <option>option-1</option>
+    <option>option-2</option>
+    <option>option-3</option>
+    {% for option in choices %}
+        <option value="{{ widget.value|stringformat:'s' }}"{% include "django/forms/widgets/attrs.html" %}>{{ widget.label }}</option>
+    {% endfor %}
+
+</select>
+{{ choices }}
+<script>
+    $(".django-select2").djangoSelect2();
+</script>

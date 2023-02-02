@@ -1,0 +1,67 @@
+[
+    {
+        "model": "master.billingcycle",
+        "pk": 1,
+        "fields": {
+            "code": null,
+            "name_en": "Monthly",
+            "name_lc": "Monthly",
+            "display_order": 1,
+            "created_at": "2023-01-30T10:21:12.458Z",
+            "updated_at": "2023-01-30T10:21:12.458Z",
+            "days_count": 30
+        }
+    },
+    {
+        "model": "master.billingcycle",
+        "pk": 2,
+        "fields": {
+            "code": null,
+            "name_en": "Bi-monthly",
+            "name_lc": "Bi-Monthly",
+            "display_order": 2,
+            "created_at": "2023-01-30T10:21:45.393Z",
+            "updated_at": "2023-01-30T10:21:45.393Z",
+            "days_count": 60
+        }
+    },
+    {
+        "model": "master.billingcycle",
+        "pk": 3,
+        "fields": {
+            "code": null,
+            "name_en": "Quaterly",
+            "name_lc": "Quaterly",
+            "display_order": 3,
+            "created_at": "2023-01-30T10:22:13.086Z",
+            "updated_at": "2023-01-30T10:22:13.086Z",
+            "days_count": 90
+        }
+    },
+    {
+        "model": "master.billingcycle",
+        "pk": 4,
+        "fields": {
+            "code": null,
+            "name_en": "Semi-annually",
+            "name_lc": "Semi-annually",
+            "display_order": 4,
+            "created_at": "2023-01-30T10:22:35.590Z",
+            "updated_at": "2023-01-30T10:22:35.590Z",
+            "days_count": 180
+        }
+    },
+    {
+        "model": "master.billingcycle",
+        "pk": 5,
+        "fields": {
+            "code": null,
+            "name_en": "Annually",
+            "name_lc": "Annually",
+            "display_order": 5,
+            "created_at": "2023-01-30T10:23:00.864Z",
+            "updated_at": "2023-01-30T10:23:00.864Z",
+            "days_count": 365
+        }
+    }
+]

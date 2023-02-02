@@ -1,0 +1,113 @@
+.asteriskField{
+    margin-left:4px;
+    color: red;
+}
+
+#crudTable thead th{
+    background-color:lightgrey
+}
+
+.left-border-lightgray{
+    border-left: 1px solid lightgray
+}
+.right-border-lightgray{
+    border-right: 1px solid lightgray
+}
+
+.width-50{
+    width:50px;
+}
+.width-100{
+    width:100px;
+}
+.width-120{
+    width:120px !important;
+}
+
+.edit-btn {
+    padding: 0px 1px 0px 3px;
+    border-radius: 3px;
+    margin-right:5px;
+}
+.show-btn {
+    padding: 0px 2px 0px 2px;
+    border-radius: 3px;
+    margin-right:10px;
+}
+.delete-btn {
+    padding: 0px 2px 0px 2px;
+    border-radius: 3px;
+    font-size: 10px;
+    margin-left:5px;
+
+}
+
+.modal-backdrop {
+    z-index: -1;
+  }
+
+.fancybox-content {
+    max-width: 80% !important;
+}
+
+div#ndp-nepali-box{
+    display:block;
+    z-index:99999;
+}
+
+.hr-line{
+    padding:0;
+    margin:0;
+}
+
+/* css for errors */
+
+.errorlist{
+    background-color: #dc3545 !important;
+    border-color: #d32535 !important;
+    color:white !important;
+    padding: 2px;
+    margin: 0px !important;
+    padding-left: 7%;
+}
+
+
+/* for notification css */
+
+.noty_theme__mint.noty_type__success {
+    background-color: green !important;
+    border-bottom: 1px solid green !important;
+    color: #fff !important;
+}
+
+.noty_theme__mint.noty_bar .noty_body {
+    padding: 10px !important;
+    font-size: 16px !important;
+}
+.form-control:disabled{
+    background-color: #dee7e86b;
+}
+
+.noty_effects_open {
+    opacity: 0;
+    transform: translate(50%);
+    animation: noty_anim_in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .noty_effects_close {
+    animation: noty_anim_out 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  @keyframes noty_anim_in {
+    100% {
+      transform: translate(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes noty_anim_out {
+    100% {
+      transform: translate(50%);
+      opacity: 0;
+    }
+}
