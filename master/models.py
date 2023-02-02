@@ -237,21 +237,28 @@ class Billing(BaseModel):
     class Meta:
         db_table = 'mst_billings'
 
-class Costumer(BaseModel):
+class Agent(BaseModel):
     STATUS_CHOICES=[
-        ('','Pending'),
-        ('overdue','Overdue'),
-        ('settled','Settled'),
-        ('partial','Partial'),
+        ('direct','Direct'),
+        ('secondary','Secondary'),
+        ('extra','Extra'),
+
     ]
-    property = models.ForeignKey(Property, on_delete=models.CASCADE,null=True,blank=True)
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE,null=True,blank=True)
-    bill_generated_date = models.DateField(blank=True,null=True)
-    status = models.CharField(choices=STATUS_CHOICES,max_length=50)
-    billing_cycle = models.ForeignKey(BillingCycle, on_delete=models.CASCADE,null=True,blank=True)
-    total_amount = models.DecimalField(default=0,max_digits=7,decimal_places=3)
-    paid_amount = models.DecimalField(default=0,max_digits=7,decimal_places=3)
-    pending_amount = models.DecimalField(default=0,max_digits=7,decimal_places=3)
-    fine_amount = models.DecimalField(default=0,max_digits=7,decimal_places=3)
+    name = models.CharField(max_length=15)
+    middle_name = models.CharField(max_length=15)
+    surname = models.CharField(max_length=15)
+    province = models.ForeignKey(
+        Province, on_delete=models.CASCADE,null=True,blank=True)
+    district = models.ForeignKey(
+        District, on_delete=models.CASCADE,null=True,blank=True)
+    local_level = models.ForeignKey(
+        LocalLevel, on_delete=models.CASCADE,null=True,blank=True)
+    address = models.CharField(max_length=255,null=True,blank=True)
+    contact = models.CharField(max_length=10)
+    secondary_contact = models.CharField(max_length=10,blank=True,null=True)
+    email = models.EmailField()
+    photo = models.ImageField(null=True,blank=True,upload_to=customer_image_upload_to,default = 'customers/nopp.jpg')
+    id_no = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
     class Meta:
-        db_table = 'mst_billings'
+        db_table = 'mst_agent'

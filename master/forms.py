@@ -22,7 +22,7 @@ def check_group(user,group_name):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-    
+
 class CustomSelect2MultipleWidget(Select2MultipleWidget):
     # def __init__(self, attrs=None, ajax=None, **kwargs):
     #     super().__init__(attrs, **kwargs)
@@ -32,7 +32,7 @@ class CustomSelect2MultipleWidget(Select2MultipleWidget):
 
 class ImageWidget(forms.widgets.ClearableFileInput):
     template_name = "widgets/image_widget.html"
-    
+
 class ProvinceForm(forms.ModelForm):
 
     class Meta:
@@ -160,7 +160,7 @@ class PropertyForm(forms.ModelForm):
         fields = ('client','name_en', 'name_lc','parent','province','district','local_level',
                     'address','block_no','floor_no','flat_no','room_no','total_area','price',
                     'display_order','photo','own_porperty','is_active','remarks')
-        
+
         form_labels.update({
                     'client':'Client',
                     'parent':'Parent',
@@ -190,18 +190,18 @@ class PropertyForm(forms.ModelForm):
         return ('code','province','district','local_level','own_porperty','is_active')
 
     def __init__(self,user=None, *args, **kwargs):
-               
+
         super(PropertyForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             if visible.name == 'remarks':
                 visible.field.widget.attrs['col'] = 'col-md-12'
             else:
                 visible.field.widget.attrs['col'] = 'col-md-4'
-            # make client hidden if user is client's user  
+            # make client hidden if user is client's user
             if(visible.name =='client'):
                 if(check_group(user,'Super Admin') is False):
                     visible.field.widget = forms.HiddenInput(attrs={'value':user.app_client_id})
-                
+
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -230,7 +230,7 @@ class CustomerForm(forms.ModelForm):
     def __init__(self,user=None, *args, **kwargs):
         super(CustomerForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
-            # make client hidden if user is client's user  
+            # make client hidden if user is client's user
             if(visible.name =='client'):
                 if(check_group(user,'Super Admin') is False):
                     visible.field.widget = forms.HiddenInput(attrs={'value':user.app_client_id})
@@ -238,7 +238,7 @@ class CustomerForm(forms.ModelForm):
                 visible.field.widget.attrs['col'] = 'col-md-12'
             else:
                 visible.field.widget.attrs['col'] = 'col-md-4'
-            
+
 class BillingCycleForm(forms.ModelForm):
     class Meta:
         model = BillingCycle
@@ -279,8 +279,8 @@ class OwnerForm(forms.ModelForm):
 
         for visible in self.visible_fields():
             visible.field.widget.attrs['col'] = 'col-md-4'
-            
-        # make client hidden if user is client's user  
+
+        # make client hidden if user is client's user
         if(visible.name =='client'):
             if(check_group(user,'Super Admin') is False):
                 visible.field.widget = forms.HiddenInput(attrs={'value':user.app_client_id})
@@ -310,7 +310,7 @@ class ContractForm(forms.ModelForm):
         }
     def extra():
         return ('contract_file',)
-        
+
     def __init__(self,user=None, *args, **kwargs):
         super(ContractForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -318,19 +318,19 @@ class ContractForm(forms.ModelForm):
                 visible.field.widget.attrs['col'] = 'col-md-12'
             else:
                 visible.field.widget.attrs['col'] = 'col-md-4'
-                
-            # make client hidden if user is client's user  
+
+            # make client hidden if user is client's user
             if(visible.name =='client'):
                 if(check_group(user,'Super Admin') is False):
                     visible.field.widget = forms.HiddenInput(attrs={'value':user.app_client_id})
                     self.fields['property'].queryset =Property.objects.filter(client=user.app_client_id)
                     self.fields['customer'].queryset =Customer.objects.filter(client=user.app_client_id)
-             
-                    
-                     
+
+
+
 class SubPropertyForm(forms.ModelForm):
     class Meta:
-        model = SubProperty      
+        model = SubProperty
         fields = ('name_en', 'name_lc', 'property', 'contract', 'block_no','floor_no','flat_no',
                   'room_no','total_area','display_order','is_active','file','remarks')
         labels = {
@@ -351,7 +351,7 @@ class SubPropertyForm(forms.ModelForm):
         }
     def extra():
         return ('file',)
-    
+
     def __init__(self, user=None, *args, **kwargs):
         super(SubPropertyForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -359,13 +359,13 @@ class SubPropertyForm(forms.ModelForm):
                 visible.field.widget.attrs['col'] = 'col-md-12'
             else:
                 visible.field.widget.attrs['col'] = 'col-md-4'
-            
+
         if(check_group(user,'Super Admin') is False):
-            # get property and contract list only related to customer 
+            # get property and contract list only related to customer
             user_properties = Contract.objects.filter(customer=user.customer_id,client=user.app_client_id).values_list('property_id')
             self.fields['property'].queryset =Property.objects.filter(id__in=user_properties)
-            self.fields['contract'].queryset =Contract.objects.filter(client=user.app_client_id,customer=user.customer_id,property__in=user_properties)    
-            
+            self.fields['contract'].queryset =Contract.objects.filter(client=user.app_client_id,customer=user.customer_id,property__in=user_properties)
+
 class EndUserForm(forms.ModelForm):
     class Meta:
         model = EndUser
@@ -415,17 +415,17 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm,self).__init__(*args,**kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['col'] = 'col-md-4'
-            
-        # make client hidden if user is client's user  
+
+        # make client hidden if user is client's user
         if(visible.name =='app_client'):
             if(check_group(user,'Super Admin') is False):
                 visible.field.widget = forms.HiddenInput(attrs={'value':user.app_client_id})
         if(check_group(user,'Super Admin') is False):
             self.fields['groups'].queryset = Group.objects.exclude(id__in=[1, 2])
-            
+
     def extra():
         return ("groups",)
-    
+
 class GroupForm(forms.ModelForm):
 
     class Meta:
@@ -435,7 +435,7 @@ class GroupForm(forms.ModelForm):
             'name':'Role Name',
             'permissions':'permission Name',
         }
-        widgets = {            
+        widgets = {
             'permissions': forms.CheckboxSelectMultiple(attrs={'required': True})
         }
     def extra():
@@ -444,34 +444,32 @@ class GroupForm(forms.ModelForm):
     def __init__(self, user=None, *args, **kwargs):
         super(GroupForm,self).__init__(*args,**kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['col'] = 'col-md-12'            
-class BillingForm(forms.ModelForm):
+            visible.field.widget.attrs['col'] = 'col-md-12'
+
+class AgentForm(forms.ModelForm):
     class Meta:
-        model = Billing
-        fields = ('property','contract','bill_generated_date','status','billing_cycle','total_amount','paid_amount','pending_amount','fine_amount')
+        model = Agent
+        fields = ('name', 'middle_name', 'surname','province', 'district', 'local_level', 'address', 'contact', 'secondary_contact', 'email', 'photo', 'is_active' )
         labels = {
-            'property':'Property',
-            'contract':'Contract',
-            'bill_generated_date':'Bill Date',
-            'status':'Status',
-            'billing_cycle':'Billing Cycle',
-            'total_amount':'Total Amount',
-            'paid_amount':'Paid Amount',
-            'pending_amount':'Pending Amount',
-            'fine_amount':'Fine Amount',
+            'name':'Name',
+            'middle_name':'Middle Name',
+            'surname':'SurName',
+            'province':'Province',
+            'district':'District',
+            'local_level':'Local Level',
+            'address':'Address',
+            'contact':'Contact',
+            'secondary_contact':'Secondary Contact',
+            'email':'Email',
+            'photo':'Photo',
+            'id_no':'ID Number',
+            'is_active':'Is Active',
         }
 
     def __init__(self, user=None, *args, **kwargs):
-        super(BillingForm,self).__init__(*args,**kwargs)
-        self.fields['property'].widget.attrs['disabled'] = True
-        self.fields['contract'].widget.attrs['disabled'] = True
-        self.fields['bill_generated_date'].widget.attrs['readonly'] = True
-        self.fields['billing_cycle'].widget.attrs['disabled'] = True
-        self.fields['total_amount'].widget.attrs['readonly'] = True
-        self.fields['pending_amount'].widget.attrs['readonly'] = True
-        self.fields['fine_amount'].widget.attrs['readonly'] = True
+        super(AgentForm,self).__init__(*args,**kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['col'] = 'col-md-4'
+            visible.field.widget.attrs['col'] = 'col-md-12'
 
 # class CustomerForm(forms.ModelForm):
 #     class Meta:

@@ -33,14 +33,14 @@
 
                 <li class="nav-item">
                     <a href="{% url 'master:homepage' %}" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i> 
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
                 {% if perms.master.view_property %}
                     <li class="nav-item">
                         <a href="{% url 'master:crud_list' 'property' %}" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i> 
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Property</p>
                         </a>
                     </li>
@@ -48,7 +48,7 @@
                 {% if perms.master.view_contract %}
                     <li class="nav-item">
                         <a href="{% url 'master:crud_list' 'contract' %}" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i> 
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Contract</p>
                         </a>
                     </li>
@@ -56,7 +56,7 @@
                 {% if perms.master.view_customer %}
                     <li class="nav-item">
                         <a href="{% url 'master:crud_list' 'customer' %}" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i> 
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Customer<br></p>
                         </a>
                     </li>
@@ -64,11 +64,38 @@
                 {% if perms.master.view_subproperty %}
                     <li class="nav-item">
                         <a href="{% url 'master:crud_list' 'sub_property' %}" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i> 
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>Sub Property<br></p>
                         </a>
                     </li>
                 {% endif %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-align-justify"></i> <p>Agent Master</p>
+                        <p><i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url 'master:crud_list' 'up-billing' %}" class="nav-link">
+                                <i class="far fa-compass nav-icon"></i>
+                                <p>Direct</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'master:crud_list' 'ov-billing' %}" class="nav-link">
+                                <i class="far fa-compass nav-icon"></i>
+                                <p>Secondary</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'master:crud_list' 'se-billing' %}" class="nav-link">
+                                <i class="far fa-compass nav-icon"></i>
+                                <p>Extra</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-align-justify"></i> <p>Billing Master</p>
@@ -201,8 +228,8 @@
                         </ul>
                     </li>
 
-                    
-                    
+
+
                 {% endif %}
                 <!-- <li class="nav-item">
                     <a href="#" class="nav-link">
