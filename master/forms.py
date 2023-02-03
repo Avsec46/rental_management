@@ -449,7 +449,7 @@ class GroupForm(forms.ModelForm):
 class AgentForm(forms.ModelForm):
     class Meta:
         model = Agent
-        fields = ('name', 'middle_name', 'surname','province', 'district', 'local_level', 'address', 'contact', 'secondary_contact', 'email', 'photo', 'is_active' )
+        fields = ('name', 'middle_name', 'surname','province', 'district', 'local_level', 'address', 'contact', 'secondary_contact', 'email', 'photo','property', 'is_active' )
         labels = {
             'name':'Name',
             'middle_name':'Middle Name',
@@ -463,13 +463,43 @@ class AgentForm(forms.ModelForm):
             'email':'Email',
             'photo':'Photo',
             'id_no':'ID Number',
+            'property':'Property',
             'is_active':'Is Active',
         }
-
     def __init__(self, user=None, *args, **kwargs):
         super(AgentForm,self).__init__(*args,**kwargs)
         for visible in self.visible_fields():
-            visible.field.widget.attrs['col'] = 'col-md-12'
+            visible.field.widget.attrs['col'] = 'col-md-4'
+
+class BillingForm(forms.ModelForm):
+    class Meta:
+        model = Billing
+        fields = ('property','contract','bill_generated_date','status','billing_cycle','total_amount','paid_amount','pending_amount','fine_amount')
+        labels = {
+            'property':'Property',
+            'contract':'Contract',
+            'bill_generated_date':'Bill Date',
+            'status':'Status',
+            'billing_cycle':'Billing Cycle',
+            'total_amount':'Total Amount',
+            'paid_amount':'Paid Amount',
+            'pending_amount':'Pending Amount',
+            'fine_amount':'Fine Amount',
+        }
+
+    def __init__(self, user=None, *args, **kwargs):
+        super(BillingForm,self).__init__(*args,**kwargs)
+        self.fields['property'].widget.attrs['disabled'] = True
+        self.fields['contract'].widget.attrs['disabled'] = True
+        self.fields['bill_generated_date'].widget.attrs['readonly'] = True
+        self.fields['billing_cycle'].widget.attrs['disabled'] = True
+        self.fields['total_amount'].widget.attrs['readonly'] = True
+        self.fields['pending_amount'].widget.attrs['readonly'] = True
+        self.fields['fine_amount'].widget.attrs['readonly'] = True
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['col'] = 'col-md-4'
+
+
 
 # class CustomerForm(forms.ModelForm):
 #     class Meta:

@@ -259,6 +259,7 @@ class Agent(BaseModel):
     email = models.EmailField()
     photo = models.ImageField(null=True,blank=True,upload_to=customer_image_upload_to,default = 'customers/nopp.jpg')
     id_no = models.CharField(max_length=50)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE,null=True,blank=True)
     is_active = models.BooleanField(default=True)
     class Meta:
         db_table = 'mst_agent'
