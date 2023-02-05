@@ -1,4 +1,15 @@
+
+.wrapper{
+    background-image: url("/static/main/img/sky.jpg");
+    background-size: cover;
+}
 .random-sec-1 .container .row a{
     text-decoration: none;
-    color: black;
+    color: rgb(41, 39, 39);
+}
+
+.random-sec-1 .card{
+    background-color: rgba(61, 87, 78, 0.432);
+    background-size: cover;
+
 }
