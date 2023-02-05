@@ -1,0 +1,46 @@
+{% extends "adminlte/base.html" %}
+{% load i18n static %}
+
+{% block page_name %}
+<div class="container-fluid">
+    <section class="random-sec-1">
+    <div class="container ">
+        <div class="row">
+            <div class="col-md-3 "><a href="{% url 'master:crud_list' 'property' %}" >
+                    <div class="card box01" >
+
+                        <div class="card-body">
+                            <p><i class="fa-solid fa-building"></i> Property</p>
+
+                        </div>
+                    </div>
+                </a></div>
+            <div class="col-md-3 "><a href="{% url 'master:crud_list' 'contract' %}" >
+                    <div class="card box02" >
+
+                        <div class="card-body">
+                            <p><i class="fa-solid fa-file-signature"></i> Contract</p>
+                        </div>
+                    </div>
+                </a></div>
+            <div class="col-md-3 "><a href="{% url 'master:crud_list' 'customer' %}" >
+                    <div class="card box03" >
+
+                        <div class="card-body">
+                            <p> <i class="fa-sharp fa-solid fa-users"></i> Customer</p>
+                        </div>
+                    </div>
+                </a></div>
+            <div class="col-md-3 "><a href="{% url 'master:crud_list' 'sub_property' %}" >
+                    <div class="card box04" >
+
+                        <div class="card-body">
+                            <p><i class="fa-solid fa-building-user"></i> Sub Property</p>
+                        </div>
+                    </div>
+                </a></div>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

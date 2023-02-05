@@ -37,6 +37,12 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{% url 'master:randompage' %}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Random</p>
+                    </a>
+                </li>
                 {% if perms.master.view_property %}
                     <li class="nav-item">
                         <a href="{% url 'master:crud_list' 'property' %}" class="nav-link">

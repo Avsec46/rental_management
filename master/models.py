@@ -237,6 +237,8 @@ class Billing(BaseModel):
     class Meta:
         db_table = 'mst_billings'
 
+
+
 class Agent(BaseModel):
     STATUS_CHOICES=[
         ('direct','Direct'),
@@ -263,3 +265,27 @@ class Agent(BaseModel):
     is_active = models.BooleanField(default=True)
     class Meta:
         db_table = 'mst_agent'
+
+
+# def contract_file_upload_to(instance, filename):
+#     return 'client-%s/contracts/%s' % (instance.client.id,filename)
+# class Rndom(BaseModel):
+#     client = models.ForeignKey(
+#         AppClient, on_delete=models.CASCADE,null=True,blank=True)
+#     property = models.ForeignKey(
+#         Property, on_delete=models.CASCADE,null=True,blank=True)
+#     customer = models.ForeignKey(
+#         Customer, on_delete=models.CASCADE,null=True,blank=True)
+#     owner = models.ForeignKey(
+#         Owner, on_delete=models.CASCADE,null=True,blank=True)
+#     billing_cycle = models.ForeignKey(
+#         BillingCycle, on_delete=models.CASCADE,null=True,blank=True)
+#     contract_file = models.FileField(null=True,blank=True,upload_to=contract_file_upload_to,default = 'customers/nopp.jpg')
+#     date_from = models.DateField()
+#     date_to = models.DateField()
+#     rent_amount = models.DecimalField(max_digits=16, decimal_places=2)
+#     increment_year = models.IntegerField()
+#     increment_rate = models.DecimalField(max_digits=16, decimal_places=2)
+#     is_active = models.BooleanField(default=True)
+#     class Meta:
+#         db_table = 'random'

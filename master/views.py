@@ -6,10 +6,11 @@ from django.template.defaulttags import register
 from .filters import *
 from .forms import *
 from .models import *
-import json,re
+import json
+import re
 from master.templatetags.custom_tags import check_permission
 
-from django.contrib.auth.models import Group,Permission
+from django.contrib.auth.models import Group, Permission
 from authentication.models import User
 
 global master_models
@@ -28,21 +29,35 @@ def homepage(request):
 def redirect_to_dashboard(request):
     return redirect('/master/dashboard')
 
-def checkPermission(request,slug,action):
+@login_required(login_url="login/")
+def randompage(request):
+    return render(request, 'layouts/random.html')
+
+
+@login_required(login_url="login/")
+def redirect_to_random(request):
+    return redirect('/master/random')
+
+
+
+
+def checkPermission(request, slug, action):
     # check if Model is present or not
     try:
-        model=eval(underscore_to_camelcase(slug))
+        model = eval(underscore_to_camelcase(slug))
         permission = underscore_to_camelcase(slug).lower()
     except Exception as e:
         return False
 
     # check for if a user has permission (check in both directly and through group)
-    if request.user.has_perm("%s.%s_%s" % (model._meta.app_label,action,permission)):
+    if request.user.has_perm("%s.%s_%s" % (model._meta.app_label, action, permission)):
         return True
     else:
         return False
 
 # List Operation
+
+
 @login_required(login_url="login/")
 def crud_list(request, slug):
 
@@ -50,16 +65,14 @@ def crud_list(request, slug):
     prev_slug = ''
     prev_slug = slug
 
-
     if('billing' in slug):
         slug = check_billing_slug(slug)
 
     if ('agent' in slug):
         slug = check_agent_slug(slug)
 
-
-    if(check_permission(request.user,('view',slug)) is False):
-        return render(request,"adminlte/pages/error/403page.html")
+    if(check_permission(request.user, ('view', slug)) is False):
+        return render(request, "adminlte/pages/error/403page.html")
     if prev_slug == slug:
         prev_slug = ''
 
@@ -89,9 +102,8 @@ def crud_list(request, slug):
     if filterFields != '' and filterFields._meta.fields:
         hasFilter = True
 
-
     context = {'header': header, 'slug': slug, 'hasFilter': hasFilter,
-               'filterFields': filterFields, 'upload_button': upload_button,'prev_slug':prev_slug}
+               'filterFields': filterFields, 'upload_button': upload_button, 'prev_slug': prev_slug}
     return render(request, "adminlte/pages/list.html", context)
 
 
@@ -99,15 +111,15 @@ def crud_list(request, slug):
 @login_required(login_url="login/")
 def filter_crud_list(request, slug):
 
-    if(check_permission(request.user,('view',slug)) is False):
-        return render(request,"adminlte/pages/error/403page.html")
+    if(check_permission(request.user, ('view', slug)) is False):
+        return render(request, "adminlte/pages/error/403page.html")
 
     modelForm = ''
     columns = ''
     labels = ''
     new_tuple = ''
     # check for filter class; if filter class is present return lists as queryset else return list
-    hasFilterClass=False
+    hasFilterClass = False
     # get model name from slug
     model = underscore_to_camelcase(slug)
     user = request.user
@@ -130,27 +142,29 @@ def filter_crud_list(request, slug):
     # if client id exists, filter clientwise data
     if('client' in columns):
         # if user group is superadmin, show all data
-        if(has_group(user,'Super Admin')):
+        if(has_group(user, 'Super Admin')):
             lists = eval(model).objects.all()
         else:
             lists = eval(model).objects.filter(client=user.app_client_id)
 
         # if user is customer, filter property only contracted to them
-        if(has_group(user,'Customer')):
-            if slug=='property':
+        if(has_group(user, 'Customer')):
+            if slug == 'property':
                 # get customer contracts
-                contracts = Contract.objects.filter(customer=user.customer_id).values_list('property_id')
+                contracts = Contract.objects.filter(
+                    customer=user.customer_id).values_list('property_id')
                 # get property list only contracted to customer
                 lists = eval(model).objects.filter(id__in=contracts)
 
             if slug == 'contract':
-                  lists = Contract.objects.filter(customer=user.customer_id)
+                lists = Contract.objects.filter(customer=user.customer_id)
 
     else:
 
         if slug == 'sub_property':
             # get customer contracts
-            contracts = Contract.objects.filter(customer=user.customer_id).values_list('property_id')
+            contracts = Contract.objects.filter(
+                customer=user.customer_id).values_list('property_id')
             # get property list only contracted to customer
             lists = SubProperty.objects.filter(property__in=contracts)
         else:
@@ -196,12 +210,10 @@ def filter_crud_list(request, slug):
             except Exception as e:
                 lists = eval(model).objects.get()
 
-    print(lists)
-
     # for filter
     if request.GET is not None:
         # if filter is present
-        filterClass=''
+        filterClass = ''
         try:
             filterClass = eval(model+'Filter')
         except NameError:
@@ -209,29 +221,31 @@ def filter_crud_list(request, slug):
 
         if filterClass != '':
             lists = filterClass(request.GET, queryset=lists)
-            hasFilterClass=True
+            hasFilterClass = True
 
-        try :
+        try:
             new_var = modelForm.extra()
         except Exception as e:
             new_var = ''
-    if new_var :
+    if new_var:
         original_tuple = columns
         values_to_remove = new_var
         # check if user is clientuser and remove client field if user is client user
-        if(has_group(user,'Super Admin') is False):
-            values_to_remove=values_to_remove+('client',)
-        new_tuple = tuple(x for x in original_tuple if x not in values_to_remove)
+        if(has_group(user, 'Super Admin') is False):
+            values_to_remove = values_to_remove+('client',)
+        new_tuple = tuple(
+            x for x in original_tuple if x not in values_to_remove)
         columns = new_tuple
 
-    context = {'columns': columns, 'labels': labels,'hasFilterClass':hasFilterClass,
+    context = {'columns': columns, 'labels': labels, 'hasFilterClass': hasFilterClass,
                'lists': lists, 'slug': slug}
     return render(request, "adminlte/pages/partial/datatable.html", context)
 
-#Create view Operation
+# Create view Operation
+
 
 @login_required(login_url='login/')
-def crud_view(request,slug,id):
+def crud_view(request, slug, id):
     modelForm = ''
     columns = ''
     labels = ''
@@ -251,13 +265,14 @@ def crud_view(request,slug,id):
         modelForm = ''
 
     entity = eval(model).objects.get(pk=id)
-    form = modelForm(user=user,instance=entity)
+    form = modelForm(user=user, instance=entity)
     # get columns name and label  for list operation
     if modelForm != '':
         columns = modelForm._meta.fields
         labels = modelForm._meta.labels
 
-    context = {'columns': columns, 'labels': labels,'slug': slug,'header':header,'form':form}
+    context = {'columns': columns, 'labels': labels,
+               'slug': slug, 'header': header, 'form': form}
     return render(request, "adminlte/pages/partial/view.html", context)
 
 
@@ -271,45 +286,46 @@ def crud_create_or_update(request, slug, id=0):
 
     # check if Model is present or not
     try:
-        evaluated_model=eval(model)
+        evaluated_model = eval(model)
     except Exception as e:
-        return render(request,"adminlte/pages/error/403.html")
+        return render(request, "adminlte/pages/error/403.html")
 
     if model == "User":
-        modelForm= 'CustomUserCreationForm'
+        modelForm = 'CustomUserCreationForm'
     else:
         modelForm = model+'Form'
 
     if request.method == "GET":
 
         if id == 0:
-            if(checkPermission(request,slug,'add') is False):
-                return render(request,"adminlte/pages/error/403.html")
+            if(checkPermission(request, slug, 'add') is False):
+                return render(request, "adminlte/pages/error/403.html")
             form = eval(modelForm)(user)
-            return render(request, "adminlte/pages/partial/create.html", {'form': form, 'slug': slug,'header':header})
+            return render(request, "adminlte/pages/partial/create.html", {'form': form, 'slug': slug, 'header': header})
         else:
-            if(checkPermission(request,slug,'change') is False):
-                return render(request,"adminlte/pages/error/403.html")
+            if(checkPermission(request, slug, 'change') is False):
+                return render(request, "adminlte/pages/error/403.html")
             entity = eval(model).objects.get(pk=id)
-            form = eval(modelForm)(user,instance=entity)
-            return render(request, "adminlte/pages/partial/edit.html", {'form': form, 'slug': slug, 'entry': entity,'header':header})
+            form = eval(modelForm)(user, instance=entity)
+            return render(request, "adminlte/pages/partial/edit.html", {'form': form, 'slug': slug, 'entry': entity, 'header': header})
     else:
         message = ''
         if id == 0:
-            if(checkPermission(request,slug,'add') is False):
-                return render(request,"adminlte/pages/error/403.html")
-            form = eval(modelForm)(user,request.POST, request.FILES)
+            if(checkPermission(request, slug, 'add') is False):
+                return render(request, "adminlte/pages/error/403.html")
+            form = eval(modelForm)(user, request.POST, request.FILES)
         else:
-            if(checkPermission(request,slug,'change') is False):
-                return render(request,"adminlte/pages/error/403.html")
+            if(checkPermission(request, slug, 'change') is False):
+                return render(request, "adminlte/pages/error/403.html")
             entity = eval(model).objects.get(pk=id)
-            form = eval(modelForm)(user,request.POST, request.FILES, instance=entity)
+            form = eval(modelForm)(user, request.POST,
+                                   request.FILES, instance=entity)
         if form.is_valid():
             form.save()
 
             if slug == 'user':
                 user_id = form.instance.id
-                create_user_role(request,user_id)
+                create_user_role(request, user_id)
 
             form.save()
 
@@ -317,7 +333,7 @@ def crud_create_or_update(request, slug, id=0):
             if(slug == 'customer'):
                 if(id == 0):
                     form_id = form.instance.id
-                    create_user(form_id,request)
+                    create_user(form_id, request)
 
             if id == 0:
                 message = 'The item has been added successfully !'
@@ -329,10 +345,11 @@ def crud_create_or_update(request, slug, id=0):
 
         return JsonResponse({'message': message, 'slug': slug})
 
+
 @login_required(login_url="login/")
 def crud_delete(request, slug, id):
-    if(checkPermission(request,slug,'delete') is False):
-        return render(request,"adminlte/pages/error/403.html")
+    if(checkPermission(request, slug, 'delete') is False):
+        return render(request, "adminlte/pages/error/403.html")
     model = underscore_to_camelcase(slug)
     entity = eval(model).objects.get(pk=id)
     delete_status = entity.delete()
@@ -406,52 +423,66 @@ def check_for_foreign_key(row, slug):
     return row
 
 
-
 @register.filter(name='has_group')
 def has_group(user, group_name):
     return user.groups.filter(name=group_name).exists()
 
 # for getting column label
+
+
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
 
 # for getting value from db using column key
+
+
 @register.filter
 def get_item_value(item, column):
     value = 'item.'+column
     return eval(value)
 
-## get districts
-def get_districts(request,province_id):
-    districts = District.objects.filter(province_id=province_id).values('id','name_en')
-    districts =list(districts)
-    return JsonResponse(districts,safe=False)
+# get districts
 
-## get_local_levels
-def get_local_levels(request,district_id):
-    local_levels = LocalLevel.objects.filter(district_id=district_id).values('id','name_en')
-    local_levels =list(local_levels)
-    return JsonResponse(local_levels,safe=False)
 
-def get_district_locallevel(request,entry_id):
+def get_districts(request, province_id):
+    districts = District.objects.filter(
+        province_id=province_id).values('id', 'name_en')
+    districts = list(districts)
+    return JsonResponse(districts, safe=False)
+
+# get_local_levels
+
+
+def get_local_levels(request, district_id):
+    local_levels = LocalLevel.objects.filter(
+        district_id=district_id).values('id', 'name_en')
+    local_levels = list(local_levels)
+    return JsonResponse(local_levels, safe=False)
+
+
+def get_district_locallevel(request, entry_id):
     # print(request)
-    result = Property.objects.filter(pk=entry_id).values('district_id','local_level_id')
-    result =list(result)
-    return JsonResponse(result,safe=False)
+    result = Property.objects.filter(pk=entry_id).values(
+        'district_id', 'local_level_id')
+    result = list(result)
+    return JsonResponse(result, safe=False)
 
-def create_user(form_id,request):
-    username=request.POST.get('name_en')
-    email=request.POST.get('email')
+
+def create_user(form_id, request):
+    username = request.POST.get('name_en')
+    email = request.POST.get('email')
     customer_id = form_id
     app_client_id = request.user.app_client_id
-    customer_user = User.objects.create_user(username=username, password='User@1234',email=email,is_staff=False,is_superuser=False,customer_id=customer_id,app_client_id=app_client_id)
+    customer_user = User.objects.create_user(username=username, password='User@1234', email=email,
+                                             is_staff=False, is_superuser=False, customer_id=customer_id, app_client_id=app_client_id)
     my_group = Group.objects.get(name='Customer')
     my_group.user_set.add(customer_user)
     return True
 
+
 def check_user_model(model):
-    if model=='User':
+    if model == 'User':
         model = 'CustomUserCreation'
     try:
         modelForm = eval(model+'Form')
@@ -459,9 +490,10 @@ def check_user_model(model):
         modelForm = ''
 
     return modelForm
+
 
 def check_user_model_form(model):
-    if model=='User':
+    if model == 'User':
         model = 'CustomUserCreation'
     try:
         modelForm = eval(model+'Form')
@@ -470,15 +502,17 @@ def check_user_model_form(model):
 
     return modelForm
 
+
 def get_model_list(model):
-    if model=='User':
+    if model == 'User':
         lists = User.objects.all()
     else:
         lists = eval(model).objects.all()
 
     return lists
 
-def create_user_role(request,user_id):
+
+def create_user_role(request, user_id):
     group_id = request.POST.get('groups')
     user = User.objects.get(id=user_id)
     if user.app_client_id == '':
@@ -491,11 +525,12 @@ def create_user_role(request,user_id):
     my_group.user_set.add(user)
     return True
 
+
 def check_billing_slug(slug):
 
-    return 'billing';
+    return 'billing'
 
-    if slug =='up-billing':
+    if slug == 'up-billing':
         slug = 'billing'
     elif slug == 'ov-billing':
         slug = 'billing'
@@ -503,9 +538,10 @@ def check_billing_slug(slug):
         slug = 'billing'
     return slug
 
+
 def check_agent_slug(slug):
 
-    return 'agent';
+    return 'agent'
 
     if slug == 'd-agent':
         slug = 'agent'
@@ -516,5 +552,3 @@ def check_agent_slug(slug):
         slug = 'agent'
 
     return slug
-
-

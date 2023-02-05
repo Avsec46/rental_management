@@ -8,6 +8,8 @@ app_name="master"
 urlpatterns = [
     path('', views.redirect_to_dashboard, name='homepage'),
     path('dashboard', views.homepage, name='homepage'),
+    path('', views.redirect_to_random, name='randompage'),
+    path('random',views.randompage, name='randompage'),
 
     # routes for province
     path('<slug:slug>/list', views.crud_list, name='crud_list'),
@@ -18,11 +20,11 @@ urlpatterns = [
     path('<slug:slug>/<int:id>/edit', views.crud_create_or_update, name='crud_update'),
     path('<slug:slug>/<int:id>/delete', views.crud_delete, name='crud_delete'),
     path('<slug:slug>/upload', views.upload, name='upload_file'),
-    
+
     path('get-districts/<int:province_id>', views.get_districts, name='get_districts'),
     path('get-local-levels/<int:district_id>', views.get_local_levels, name='get_local_levels'),
     path('get-district-locallevel/<int:entry_id>', views.get_district_locallevel, name='get_district_locallevel'),
-    
+
 ]
 
 if settings.DEBUG:
