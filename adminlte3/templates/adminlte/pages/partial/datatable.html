@@ -1,6 +1,7 @@
  <table id="crudTable" class="table table-sm table-striped table-hover bg-white nowrap" width="100%" style="background-color:lightgrey;" cellspacing="0">
     <thead>
     <tr>
+        <th><input id="check_all" type="checkbox"></th>
         <th class="text-center width-50" data-orderable="false">S.N</th>
         {%if columns %}
         {% for column in columns %}
@@ -13,9 +14,13 @@
     </tr>
     </thead>
     <tbody>
-        {% if hasFilterClass %} 
+
+        {% if hasFilterClass %}
             {% for item in lists.qs %}
                 <tr>
+
+                    <td><input type="checkbox" name="row-check" value="1"></td>
+
                     <td class="text-center right-border-lightgray">{{ forloop.counter }}</td>
                     {% for column in columns %}
                         <td>{{ item|get_item_value:column}}</td>
@@ -29,8 +34,13 @@
             {% endfor %}
         {%else%}
 
+        <!-- <form id="property-form"> -->
+            {% csrf_token %}
             {% for item in lists %}
                 <tr>
+
+                    <td><input id="items{{item.id}}" class="row-checkbox" type="checkbox" name="row-check" data-id_value="{{ item.id }}"></td>
+
                     <td class="text-center right-border-lightgray">{{ forloop.counter }}</td>
                     {% for column in columns %}
                         <td>{{ item|get_item_value:column}}</td>
@@ -41,7 +51,113 @@
                     {% include '../../buttons/delete_button.html' with slug=slug id=item.id %}
                     </td>
                 </tr>
-            {% endfor %}    
+            {% endfor %}
+        <!-- </form> -->
         {%endif%}
+
     </tbody>
 </table>
+
+<div class="select-btn mb-2">
+    <button id="bulk-delete" type="button" class="btn btn-danger">Delete</button>
+</div>
+
+
+
+<script>
+    $(function() {
+	// If check_all checked then check all table rows
+	$("#bulk-delete").on("click", function () {
+        let checkedIds = $("input[name='row-check']:checked").map(function(){
+            return $(this).data('id_value');
+        }).get();
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-danger ml-5',
+                cancelButton: 'btn btn-secondary mr-5'
+            },
+            buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
+		    title: "Warning",
+		    text: "Are you sure you want to delete this item?",
+		    icon: "warning",
+		    showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it',
+            reverseButtons: true
+		}).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url: '/master/delete-bulk/{{slug}}',
+                    type: "post",
+                    data:{
+                        'id_lists':checkedIds,
+                    },
+                    success: function(result) {
+
+                        if (result.status != 'success') {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'warning',
+                                title: 'Your item is safe !',
+                                showConfirmButton: false,
+                                timer: 1000
+                            })
+
+                        } else {
+                            // Show a success message
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Your item has been deleted !',
+                                showConfirmButton: false,
+                                timer: 1000
+                            })
+
+                            location.reload();
+                        }
+                    },
+
+                });
+
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Your item is safe !',
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+            }
+        })
+
+
+
+
+
+    });
+	$("#check_all").on("click", function () {
+		if ($("input:checkbox").prop("checked")) {
+			$(".row-checkbox").prop("checked", true);
+		} else {
+			$(".row-checkbox").prop("checked", false);
+		}
+	});
+
+	// Check each table row checkbox
+	$("input:checkbox[name='row-check']").on("change", function () {
+		var total_check_boxes = $("input:checkbox[name='row-check']").length;
+		var total_checked_boxes = $("input:checkbox[name='row-check']:checked").length;
+
+		// If all checked manually then check check_all checkbox
+		if (total_check_boxes === total_checked_boxes) {
+			$("#check_all").prop("checked", true);
+		}
+		else {
+			$("#check_all").prop("checked", false);
+		}
+	});
+});
+</script>

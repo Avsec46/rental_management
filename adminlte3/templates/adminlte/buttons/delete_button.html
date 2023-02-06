@@ -9,7 +9,7 @@
 {% block extra_js %}
 <script>
 
- 
+
 	  function deleteEntry(button) {
 
         const swalWithBootstrapButtons = Swal.mixin({
@@ -18,7 +18,7 @@
                 cancelButton: 'btn btn-secondary mr-5'
             },
             buttonsStyling: false
-            });
+        });
 
 		// ask for confirmation before deleting an item
 		// e.preventDefault();
@@ -59,7 +59,7 @@
                                 timer: 1000
                             })
 
-                          loadDatatableList(result.slug)  
+                          loadDatatableList(result.slug)
                         }
                     },
                     error: function(result) {

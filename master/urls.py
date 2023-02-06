@@ -10,6 +10,8 @@ urlpatterns = [
     path('dashboard', views.homepage, name='homepage'),
     path('', views.redirect_to_random, name='randompage'),
     path('random',views.randompage, name='randompage'),
+    path('delete-bulk/<slug:slug>', views.bulk_delete, name='delete-bulk'),
+
 
     # routes for province
     path('<slug:slug>/list', views.crud_list, name='crud_list'),

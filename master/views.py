@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, JsonResponse
+from django.shortcuts import (get_object_or_404,
+                              render,
+                              HttpResponseRedirect)
 from django.shortcuts import redirect, render
 from django.template import RequestContext
 from django.template.defaulttags import register
@@ -29,6 +32,7 @@ def homepage(request):
 def redirect_to_dashboard(request):
     return redirect('/master/dashboard')
 
+
 @login_required(login_url="login/")
 def randompage(request):
     return render(request, 'layouts/random.html')
@@ -37,8 +41,6 @@ def randompage(request):
 @login_required(login_url="login/")
 def redirect_to_random(request):
     return redirect('/master/random')
-
-
 
 
 def checkPermission(request, slug, action):
@@ -90,7 +92,8 @@ def crud_list(request, slug):
         filterClass = ''
 
     if filterClass:
-        filterFields = filterClass(request.GET, queryset=eval(model).objects.all())
+        filterFields = filterClass(
+            request.GET, queryset=eval(model).objects.all())
 
     if model in master_models:
         upload_button = True
@@ -552,3 +555,16 @@ def check_agent_slug(slug):
         slug = 'agent'
 
     return slug
+
+
+def bulk_delete(request, slug):
+
+    model = eval(underscore_to_camelcase(slug))
+    if request.method == "POST":
+        id_lists = [int(id) for id in request.POST.getlist('id_lists[]')]
+        objs = model.objects.filter(id__in=id_lists)
+        for obj in objs:
+            print(obj)
+            obj.delete()
+    return JsonResponse({'status': 'success'})
+
